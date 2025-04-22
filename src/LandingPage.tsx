@@ -8,14 +8,16 @@ import TicketCard from "./components/ticket/TicketCard";
 import { useGeneralContext } from "./generalContextApi";
 import { Alert, Box, Snackbar } from "@mui/material";
 import { useState } from "react";
-import NearMeComponent from "./components/nearme/NearMe";
-import NearByComponent from "./components/nearby/NearBy";
 
+import SearchIcon from "@mui/icons-material/Search";
+import ComingSoonSection from "./components/ComingSoonSection";
+
+// Updated Landing Component
 const Landing = () => {
   const context: any = useGeneralContext();
   const [state] = useState({
-    vertical: 'top',
-    horizontal: 'center',
+    vertical: "top" as const,  // Corrected TypeScript type here
+    horizontal: "center" as const,
   });
   const { vertical, horizontal } = state;
 
@@ -25,67 +27,83 @@ const Landing = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <WelcomeSection />
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-around gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-10 max-w-7xl mx-auto py-10 px-10">
-          <Link to="/bus-ticket"><BusTicketCard /></Link>
-          <Link to="/daily-pass"><DailyPassCard /></Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        {/* Search Box */}
+        <div className="bg-white p-4 rounded-xl shadow-md">
+          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+            <SearchIcon className="text-gray-600" />
+            <input
+              type="text"
+              placeholder="Where do you wanna go?"
+              className="bg-transparent outline-none w-full text-gray-700 placeholder-gray-500"
+            />
+          </div>
         </div>
-        <div className="grid grid-cols-4 sm:flex sm:flex-row items-center justify-around gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-10 max-w-7xl mx-auto">
+
+        {/* Welcome Section with reduced margin */}
+        <WelcomeSection />
+
+        {/* Cards Section 1 */}
+        <div className="flex flex-wrap justify-center gap-6">
+          <Link to="/bus-ticket">
+            <BusTicketCard />
+          </Link>
+          <Link to="/daily-pass">
+            <DailyPassCard />
+          </Link>
+        </div>
+
+        {/* Cards Section 2 */}
+        <div className="flex flex-wrap justify-center gap-6">
           <TicketCard />
           <PassCard />
           <RouteCard />
           <MetroCard />
         </div>
-        <section>
-          <NearMeComponent />
-        </section>
-        <section>
-          <NearByComponent />
-        </section>
+
+        <ComingSoonSection />
+
+
+        
       </div>
+
+      {/* Session Expired Snackbar */}
       <Box sx={{ width: 500 }}>
         <Snackbar
           autoHideDuration={2000}
           onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{ vertical, horizontal }}
           open={context.state.isSessionExpired}
           key={vertical + horizontal}
         >
-          <Alert
-            severity="error"
-            variant="standard"
-            sx={{ width: '100%' }}
-          >
+          <Alert severity="error" variant="standard" sx={{ width: "100%" }}>
             Session Expired
           </Alert>
         </Snackbar>
       </Box>
-
     </>
   );
-}
+};
 
 export default Landing;
 
-
+// Updated WelcomeSection Component with reduced space
 export function WelcomeSection() {
   return (
-    <div className="flex flex-row items-center justify-between gap-2 sm:gap-4 lg:gap-8 py-6 lg:py-14 px-2 sm:px-4 max-w-7xl mx-auto overflow-x-hidden">
+    <div className="flex flex-col sm:flex-row items-center justify-center text-center gap-4 sm:gap-6 py-6 px-2">
       <img
         src="/public/bus.png"
         alt="Regular Bus"
-        className="w-1/3 h-20 sm:w-48 sm:h-32 lg:w-80 lg:h-48"
+        className="w-24 h-20 sm:w-48 sm:h-32 lg:w-64 lg:h-44 object-contain"
       />
-
-      <h1 className="text-base sm:text-2xl lg:text-4xl font-bold text-center">
+      <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold">
         Welcome to<br className="sm:hidden" /> Apli PMPML
       </h1>
-
       <img
         src="/public/ac-bus.png"
         alt="AC Bus"
-        className="w-1/3 h-20 sm:w-48 sm:h-32 lg:w-80 lg:h-48"
+        className="w-24 h-20 sm:w-48 sm:h-32 lg:w-64 lg:h-44 object-contain"
       />
     </div>
   );

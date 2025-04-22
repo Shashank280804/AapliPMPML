@@ -1,3 +1,123 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Light Mode and Dark Mode Styles */
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Light Mode */
+body.light-mode {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background-color: #181818;
+  color: #f9f9f9;
+}
+
+/* Header Styles */
+header {
+  background-color: #639359; /* Green background for header */
+}
+
+header .text-white {
+  color: white;
+}
+
+header .text-gray-700 {
+  color: #4a4a4a;
+}
+
+header .hover\:bg-gray-100:hover {
+  background-color: #f1f1f1;
+}
+
+header .hover\:text-green-600:hover {
+  color: #5aaf5a;
+}
+
+/* Sidebar Styles */
+.fixed {
+  position: fixed;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.bg-gray-100 {
+  background-color: #f7f7f7;
+}
+
+.text-gray-600 {
+  color: #4a4a4a;
+}
+
+.text-gray-700 {
+  color: #333;
+}
+
+.text-green-700 {
+  color: #639359;
+}
+
+.text-green-600 {
+  color: #5aaf5a;
+}
+
+.text-red-600 {
+  color: #d9534f;
+}
+
+.shadow-lg {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.transition-transform {
+  transition: transform 0.2s ease-in-out;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Menu Styles */
+.menu-item {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  background-color: #f1f1f1;
+}
+
+.menu-item svg {
+  margin-right: 0.5rem;
+}
+
+/* Dark Mode Header */
+body.dark-mode header {
+  background-color: #444; /* Darker green for dark mode */
+}
+
+/* Smooth Transition for Background and Text Color */
+body,
+header,
+footer {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
