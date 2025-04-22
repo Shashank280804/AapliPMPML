@@ -6,7 +6,7 @@ const ThankYou = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/"); // Redirect to home after 3 seconds
+      navigate("/"); 
     }, 2000);
 
     return () => clearTimeout(timer);
