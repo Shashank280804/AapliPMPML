@@ -10,6 +10,11 @@ import TicketForm from "./components/ticket/TicketForm";
 import ViewTicketComponent from "./components/ticket/ViewTicketComponent";
 import Complaints from "./components/Complaints";
 import Help from "./components/Help";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import Feedback from "./pages/Feedback";
+import ThankYou from "./pages/ThankYou";
+
 
 export const router = createBrowserRouter([
   {
@@ -55,7 +60,22 @@ export const router = createBrowserRouter([
       {
         path: "/help",
         element: <Help />,
-
+      },
+      {
+        path: "/signup",  
+        element: <Signup />,
+      },
+      {
+        path: "/login",  
+        element: <Login />,
+      },
+      {
+        path: "/feedback",  
+        element: <Feedback />,
+      },
+      {
+        path: "/thankyou",  
+        element: <ThankYou />,
       },
     ],
   },

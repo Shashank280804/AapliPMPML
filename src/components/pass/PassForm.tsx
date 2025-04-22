@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Timer } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +33,6 @@ export default function PassForm() {
     };
 
     updateDateTime();
-
     const interval = setInterval(updateDateTime, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -68,11 +66,18 @@ export default function PassForm() {
       }, 1000);
       return () => clearTimeout(timerId);
     }
-  }
+  };
 
   const handleGoBack = () => {
     navigate('/');
-  }
+  };
+
+  const handlePayment = () => {
+    alert(`Pass for ${selectedOption.label} purchased successfully!`);
+    // Add backend integration here
+  };
+
+  const isPayable = selectedOption.label && inputNumber.length === 4;
 
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-2 py-12">
@@ -91,7 +96,7 @@ export default function PassForm() {
           <div className='flex items-center bg-red-100 rounded-2xl p-2 md:p-3'>
             <Timer />
             <span className="text-sm md:text-base lg:text-md ml-2">
-              {formInputs.timer} {timer.minutes} : {timer.seconds === 0 ? '00' : timer.seconds}
+              {formInputs.timer} {timer.minutes} : {timer.seconds.toString().padStart(2, '0')}
             </span>
           </div>
         </div>
@@ -112,12 +117,11 @@ export default function PassForm() {
                     key={option.id}
                     onClick={() => setSelectedOption(option)}
                     className={`
-                  p-3 rounded-lg border-2 transition-all duration-200
-                  ${selectedOption.label === option.label
+                      p-3 rounded-lg border-2 transition-all duration-200
+                      ${selectedOption.label === option.label
                         ? 'border-green-500 bg-green-50 text-green-700 font-medium'
-                        : 'border-gray-200 hover:border-green-200 hover:bg-gray-50'
-                      }
-                `}
+                        : 'border-gray-200 hover:border-green-200 hover:bg-gray-50'}
+                    `}
                   >
                     {option.label}
                   </button>
@@ -147,18 +151,26 @@ export default function PassForm() {
                 />
               </div>
 
-              {(selectedOption || inputNumber) && (
+              {isPayable && (
                 <div className="mt-4 p-3 bg-yellow-100 rounded-md text-sm">
-                  <p className="font-medium text-yellow-600"> {formInputs.idInstruction}</p>
+                  <p className="font-medium text-yellow-600">{formInputs.idInstruction}</p>
                 </div>
               )}
 
               <Divider />
 
-              <div className="flex justify-between">
-                <div className="font-bold">{formInputs.amount}</div>
-                <div className="font-bold">${selectedOption.amount}.0</div>
+              <div className="flex justify-between font-bold">
+                <div>{formInputs.amount}</div>
+                <div>{isPayable ? `₹${selectedOption.amount}.0` : '₹0.0'}</div>
               </div>
+
+              <button
+                className="w-full mt-6 p-3 bg-green-600 text-white rounded-lg font-semibold disabled:opacity-50"
+                disabled={!isPayable}
+                onClick={handlePayment}
+              >
+                PAY ₹{selectedOption.amount}.0
+              </button>
             </div>
           </div>
         </div>
