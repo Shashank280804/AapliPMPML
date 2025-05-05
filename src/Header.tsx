@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
@@ -9,37 +9,46 @@ import {
   Contact,
   Menu,
   MessageCircle,
+  Sun,
+  Moon
 } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false); // Track dark mode
+  const menuRef = useRef(null); // menuRef for detecting clicks outside
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // Check local storage for saved theme on load
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.body.classList.remove("dark");
+    }
   }, []);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      menuRef.current &&
-      !menuRef.current.contains(event.target as Node)
-    ) {
-      setIsMenuOpen(false);
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode ? "dark" : "light";
+    setIsDarkMode(!isDarkMode);
+
+    if (newTheme === "dark") {
+      document.body.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
-  const gotoHome = () => {
-    setIsMenuOpen(false);
-    navigate("/");
-  };
-
-  const handleLogout = () => {
-    setIsMenuOpen(false);
-    // Add logout logic here
-    navigate("/login");
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setIsMenuOpen(false);
+    }
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -48,8 +57,9 @@ const Header = () => {
   return (
     <>
       <header
-        className="flex justify-between w-full h-16 sm:h-20 items-center px-4 sm:px-6 py-2 sm:py-4"
-        style={{ background: "#639359" }}
+        className={`flex justify-between w-full h-16 sm:h-20 items-center px-4 sm:px-6 py-2 sm:py-4 transition-colors duration-300 ${
+          isDarkMode ? "bg-gray-800" : "bg-green-700"
+        }`}
       >
         <div className="flex items-center space-x-4">
           <Menu
@@ -57,7 +67,7 @@ const Header = () => {
             onClick={toggleSidebar}
           />
           <img
-            onClick={gotoHome}
+            onClick={() => navigate("/")}
             className="h-12 sm:h-16 cursor-pointer object-contain"
             src="/pmpml.png"
             alt="Apli PMPML"
@@ -68,73 +78,87 @@ const Header = () => {
           <p>Welcome, User</p>
         </div>
 
-        <div className="relative" ref={menuRef}>
-          <div
-            className="flex items-center space-x-2 sm:space-x-4 cursor-pointer"
-            onClick={toggleMenu}
-          >
-            <img
-              src="/profile.png"
-              alt="User Profile"
-              className="h-10 rounded-full"
-            />
-            <ChevronDown
-              className={`h-4 w-4 sm:h-5 sm:w-5 text-white transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
-            />
+        <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <div className="cursor-pointer" onClick={toggleTheme}>
+            {isDarkMode ? (
+              <Sun className="text-white h-6 w-6" />
+            ) : (
+              <Moon className="text-white h-6 w-6" />
+            )}
           </div>
-          {isMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <Link
-                to="/profile"
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <User className="h-4 w-4 mr-2" />
-                Profile
-              </Link>
-              <Link
-                to="https://pmpml.org/"
-                target="_blank"
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Contact className="h-4 w-4 mr-2" />
-                About PMPML
-              </Link>
-              <Link
-                to="/help"
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Help
-              </Link>
-              <Link
-                to="/complaints"
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Complaints
-              </Link>
-              <Link
-                to="/feedback"
-                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Feedback
-              </Link>
-              <div className="border-t border-gray-100"></div>
-              <div
-                className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center cursor-pointer"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Log out
-              </div>
+
+          {/* Profile Menu */}
+          <div className="relative" ref={menuRef}>
+            <div
+              className="flex items-center space-x-2 sm:space-x-4 cursor-pointer"
+              onClick={toggleMenu}
+            >
+              <img
+                src="/profile.png"
+                alt="User Profile"
+                className="h-10 rounded-full"
+              />
+              <ChevronDown
+                className={`h-4 w-4 sm:h-5 sm:w-5 text-white transition-transform ${
+                  isMenuOpen ? "rotate-180" : ""
+                }`}
+              />
             </div>
-          )}
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                <Link
+                  to="/profile"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Link>
+                <Link
+                  to="https://pmpml.org/"
+                  target="_blank"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Contact className="h-4 w-4 mr-2" />
+                  About PMPML
+                </Link>
+                <Link
+                  to="/help"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Help
+                </Link>
+                <Link
+                  to="/complaints"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Complaints
+                </Link>
+                <Link
+                  to="/feedback"
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Feedback
+                </Link>
+                <div className="border-t border-gray-100"></div>
+                <div
+                  className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center cursor-pointer"
+                  onClick={() => navigate("/login")}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Log out
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
